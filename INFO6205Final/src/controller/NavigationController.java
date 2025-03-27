@@ -34,7 +34,7 @@ public class NavigationController {
             currentPane = paneStack.pop();
             scene.setRoot(currentPane);
         } else {
-            System.out.println("No more in stack.");
+            System.out.println("No more panes in stack.");
         }
     }
 }
