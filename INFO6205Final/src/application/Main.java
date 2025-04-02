@@ -27,7 +27,7 @@ public class Main extends Application {
 	    navController.setScene(scene);
 
 	    // 5. 最后把 scene 设置到 Stage 并 show
-	    primaryStage.setTitle("Calendar Demo");
+	    primaryStage.setTitle("Calendar");
 	    primaryStage.setScene(scene);
 	    primaryStage.show();
 	}

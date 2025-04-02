@@ -76,5 +76,55 @@ public class DataStore {
         // PriorityQueue遍历时并不会破坏原顺序，可以把它copy出来
         return new ArrayList<>(pq);
     }
+    
+    // 新增，删除事件
+    public boolean removeEvent(String userId, String eventId) {
+        // 确认事件是否存在
+        Event eventToRemove = eventMap.get(eventId);
+        if (eventToRemove == null) {
+            System.out.println("RemoveEvent: Event not found, eventId=" + eventId);
+            return false;
+        }
+        
+        // Get the date of the event
+        LocalDate eventDate = eventToRemove.getStartTime().toLocalDate();
+        
+        // Check if the user has any events
+        Map<LocalDate, PriorityQueue<Event>> userEvents = userDailyEvents.get(userId);
+        if (userEvents == null) {
+            System.out.println("RemoveEvent: No events for userId=" + userId);
+            return false;
+        }
+        
+        // Check if the user has events on that date
+        PriorityQueue<Event> eventsOnDate = userEvents.get(eventDate);
+        if (eventsOnDate == null) {
+            System.out.println("RemoveEvent: No events for date=" + eventDate);
+            return false;
+        }
+        
+        // 从priority queue中删除event
+        boolean removed = eventsOnDate.removeIf(event -> event.getEventId().equals(eventId));
+        
+        // If the priority queue is now empty, remove it from the map
+        if (eventsOnDate.isEmpty()) {
+            userEvents.remove(eventDate);
+            
+            // If the user has no more events, remove their entry from userDailyEvents
+            if (userEvents.isEmpty()) {
+                userDailyEvents.remove(userId);
+            }
+        }
+        
+        // 从eventMap中删除
+        if (removed) {
+            eventMap.remove(eventId);
+            System.out.println("RemoveEvent: Successfully removed eventId=" + eventId + ", title=" + eventToRemove.getTitle());
+        } else {
+            System.out.println("RemoveEvent: Event not found in user's events, eventId=" + eventId);
+        }
+        
+        return removed;
+    }
 }
 
